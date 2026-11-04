@@ -1,310 +1,273 @@
-
--- TORCHVEIL | ACTIVE COUNTER V2
--- Premium Cyberpunk UI
+-- TORCHVEIL MINI ACTIVE COUNTER
+-- Delta Executor | Mobile
 
 local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
-local UIS = game:GetService("UserInputService")
+local UserInputService = game:GetService("UserInputService")
 
 local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 
--- Remove previous versions
-for _, name in ipairs({"ActiveCounterGUI", "ActiveCounterGUI_V2"}) do
-    local old = playerGui:FindFirstChild(name)
-    if old then old:Destroy() end
+local old = playerGui:FindFirstChild("ActiveCounterGUI")
+if old then old:Destroy() end
+
+local function copyLink(url)
+    if setclipboard then
+        setclipboard(url)
+    elseif toclipboard then
+        toclipboard(url)
+    else
+        warn("Clipboard unavailable")
+    end
 end
 
 local gui = Instance.new("ScreenGui")
-gui.Name = "ActiveCounterGUI_V2"
+gui.Name = "ActiveCounterGUI"
 gui.ResetOnSpawn = false
+gui.DisplayOrder = 999
 gui.Parent = playerGui
 
-local function corner(parent, radius)
-    local c = Instance.new("UICorner")
-    c.CornerRadius = UDim.new(0, radius)
-    c.Parent = parent
-    return c
-end
-
-local function stroke(parent, color, thickness, transparency)
-    local s = Instance.new("UIStroke")
-    s.Color = color
-    s.Thickness = thickness
-    s.Transparency = transparency or 0
-    s.Parent = parent
-    return s
-end
-
-local function tween(object, time, properties)
-    TweenService:Create(
-        object,
-        TweenInfo.new(time, Enum.EasingStyle.Quint, Enum.EasingDirection.Out),
-        properties
-    ):Play()
-end
-
--- Main holder
+-- MAIN HOLDER
 local holder = Instance.new("Frame")
-holder.Name = "Main"
-holder.Size = UDim2.fromOffset(166, 31)
+holder.Size = UDim2.fromOffset(156, 125)
 holder.Position = UDim2.fromOffset(12, 12)
-holder.BackgroundColor3 = Color3.fromRGB(15, 16, 21)
-holder.BorderSizePixel = 0
-holder.ClipsDescendants = false
+holder.BackgroundTransparency = 1
 holder.Parent = gui
-corner(holder, 9)
-stroke(holder, Color3.fromRGB(255, 112, 35), 1.2, 0.2)
 
--- Header
+-- FIXED HEADER
 local header = Instance.new("Frame")
-header.Size = UDim2.fromScale(1, 1)
-header.BackgroundColor3 = Color3.fromRGB(23, 24, 31)
+header.Size = UDim2.fromOffset(156, 29)
+header.BackgroundColor3 = Color3.fromRGB(20, 20, 25)
 header.BorderSizePixel = 0
-header.ZIndex = 2
+header.ZIndex = 5
 header.Parent = holder
-corner(header, 9)
 
-local gradient = Instance.new("UIGradient")
-gradient.Color = ColorSequence.new({
-    ColorSequenceKeypoint.new(0, Color3.fromRGB(37, 27, 25)),
-    ColorSequenceKeypoint.new(1, Color3.fromRGB(19, 20, 27))
-})
-gradient.Rotation = 15
-gradient.Parent = header
+local hc = Instance.new("UICorner")
+hc.CornerRadius = UDim.new(0, 9)
+hc.Parent = header
 
--- Orange accent
-local accent = Instance.new("Frame")
-accent.Size = UDim2.new(0, 3, 0.55, 0)
-accent.Position = UDim2.new(0, 8, 0.225, 0)
-accent.BackgroundColor3 = Color3.fromRGB(255, 112, 35)
-accent.BorderSizePixel = 0
-accent.ZIndex = 4
-accent.Parent = header
-corner(accent, 3)
+local hs = Instance.new("UIStroke")
+hs.Color = Color3.fromRGB(65, 65, 75)
+hs.Thickness = 1
+hs.Parent = header
 
--- Status dot
+-- GREEN DOT
 local dot = Instance.new("Frame")
 dot.Size = UDim2.fromOffset(7, 7)
-dot.Position = UDim2.fromOffset(18, 12)
-dot.BackgroundColor3 = Color3.fromRGB(70, 255, 145)
+dot.Position = UDim2.fromOffset(9, 11)
+dot.BackgroundColor3 = Color3.fromRGB(0, 255, 75)
 dot.BorderSizePixel = 0
-dot.ZIndex = 4
+dot.ZIndex = 7
 dot.Parent = header
-corner(dot, 10)
 
-local dotStroke = stroke(dot, Color3.fromRGB(70, 255, 145), 2, 0.5)
+local dc = Instance.new("UICorner")
+dc.CornerRadius = UDim.new(1, 0)
+dc.Parent = dot
 
--- Counter
+-- COUNTER
 local counter = Instance.new("TextLabel")
-counter.Size = UDim2.fromOffset(90, 24)
-counter.Position = UDim2.fromOffset(31, 3)
+counter.Size = UDim2.new(1, -55, 1, 0)
+counter.Position = UDim2.fromOffset(22, 0)
 counter.BackgroundTransparency = 1
-counter.Text = "693 ACTIVE"
-counter.TextColor3 = Color3.fromRGB(245, 245, 250)
+counter.Text = "693 Active"
+counter.TextColor3 = Color3.new(1, 1, 1)
 counter.Font = Enum.Font.GothamBold
-counter.TextSize = 12
+counter.TextSize = 13
 counter.TextXAlignment = Enum.TextXAlignment.Left
-counter.ZIndex = 4
+counter.ZIndex = 7
 counter.Parent = header
 
--- Menu button
+-- MENU BUTTON
 local menu = Instance.new("TextButton")
-menu.Size = UDim2.fromOffset(29, 25)
-menu.Position = UDim2.new(1, -32, 0, 3)
-menu.BackgroundColor3 = Color3.fromRGB(42, 35, 34)
-menu.Text = "☰"
-menu.TextColor3 = Color3.fromRGB(255, 135, 70)
-menu.Font = Enum.Font.GothamBold
-menu.TextSize = 15
-menu.AutoButtonColor = false
-menu.ZIndex = 5
+menu.Size = UDim2.fromOffset(27, 23)
+menu.Position = UDim2.new(1, -31, 0, 3)
+menu.BackgroundColor3 = Color3.fromRGB(38, 38, 46)
+menu.Text = ""
+menu.BorderSizePixel = 0
+menu.ZIndex = 8
 menu.Parent = header
-corner(menu, 6)
 
--- Dropdown
+local mc = Instance.new("UICorner")
+mc.CornerRadius = UDim.new(0, 6)
+mc.Parent = menu
+
+for i = 1, 3 do
+    local line = Instance.new("Frame")
+    line.Size = UDim2.fromOffset(13, 2)
+    line.Position = UDim2.new(0.5, -6, 0, 5 + (i - 1) * 5)
+    line.BackgroundColor3 = Color3.new(1, 1, 1)
+    line.BorderSizePixel = 0
+    line.ZIndex = 9
+    line.Parent = menu
+end
+
+-- DROPDOWN
 local panel = Instance.new("Frame")
-panel.Position = UDim2.new(0, 0, 0, 37)
-panel.Size = UDim2.new(1, 0, 0, 0)
-panel.BackgroundColor3 = Color3.fromRGB(17, 18, 24)
+panel.Size = UDim2.fromOffset(156, 0)
+panel.Position = UDim2.fromOffset(0, 34)
+panel.BackgroundColor3 = Color3.fromRGB(20, 20, 25)
 panel.BorderSizePixel = 0
 panel.ClipsDescendants = true
-panel.Visible = true
-panel.ZIndex = 3
+panel.Visible = false
+panel.ZIndex = 2
 panel.Parent = holder
-corner(panel, 9)
-stroke(panel, Color3.fromRGB(255, 112, 35), 1, 0.45)
 
-local panelTitle = Instance.new("TextLabel")
-panelTitle.Size = UDim2.new(1, -16, 0, 19)
-panelTitle.Position = UDim2.fromOffset(9, 5)
-panelTitle.BackgroundTransparency = 1
-panelTitle.Text = "✦  CONNECT WITH US"
-panelTitle.TextColor3 = Color3.fromRGB(255, 145, 85)
-panelTitle.TextSize = 9
-panelTitle.Font = Enum.Font.GothamBold
-panelTitle.TextXAlignment = Enum.TextXAlignment.Left
-panelTitle.ZIndex = 4
-panelTitle.Parent = panel
+local pc = Instance.new("UICorner")
+pc.CornerRadius = UDim.new(0, 9)
+pc.Parent = panel
 
+local ps = Instance.new("UIStroke")
+ps.Color = Color3.fromRGB(65, 65, 75)
+ps.Thickness = 1
+ps.Parent = panel
+
+-- LINKS
 local links = {
-    {icon = "♪", name = "TikTok #1", url = "https://www.tiktok.com/@torchveil"},
-    {icon = "♪", name = "TikTok #2", url = "https://www.tiktok.com/@darkest.mm2"},
-    {icon = "▶", name = "YouTube", url = "https://www.youtube.com/@ScriptDox"},
-    {icon = "◈", name = "Discord", url = "https://discord.gg/jKsNYcbwaY"}
+    {
+        Name = "Main TikTok",
+        Logo = "♪",
+        Color = Color3.fromRGB(255, 255, 255),
+        URL = "https://www.tiktok.com/@torchveil"
+    },
+    {
+        Name = "Second TikTok",
+        Logo = "♪",
+        Color = Color3.fromRGB(255, 255, 255),
+        URL = "https://www.tiktok.com/@darkest.mm2"
+    },
+    {
+        Name = "YouTube",
+        Logo = "▶",
+        Color = Color3.fromRGB(255, 45, 45),
+        URL = "https://www.youtube.com/@ScriptDox"
+    },
+    {
+        Name = "Discord",
+        Logo = "◈",
+        Color = Color3.fromRGB(110, 120, 255),
+        URL = "https://discord.gg/jKsNYcbwaY"
+    }
 }
-
-local function copyText(value)
-    if setclipboard then
-        setclipboard(value)
-        return true
-    elseif toclipboard then
-        toclipboard(value)
-        return true
-    end
-    return false
-end
-
-local toast = Instance.new("TextLabel")
-toast.Size = UDim2.fromOffset(145, 22)
-toast.Position = UDim2.new(0.5, -72, 1, 8)
-toast.BackgroundColor3 = Color3.fromRGB(35, 30, 27)
-toast.TextColor3 = Color3.fromRGB(255, 160, 100)
-toast.Text = "LINK COPIED!"
-toast.TextSize = 10
-toast.Font = Enum.Font.GothamBold
-toast.BackgroundTransparency = 1
-toast.TextTransparency = 1
-toast.ZIndex = 10
-toast.Parent = holder
-corner(toast, 6)
-
-local function showToast(message)
-    toast.Text = message
-    tween(toast, 0.2, {
-        BackgroundTransparency = 0,
-        TextTransparency = 0,
-        Position = UDim2.new(0.5, -72, 1, 5)
-    })
-    task.delay(1.3, function()
-        tween(toast, 0.2, {
-            BackgroundTransparency = 1,
-            TextTransparency = 1,
-            Position = UDim2.new(0.5, -72, 1, 8)
-        })
-    end)
-end
 
 for i, data in ipairs(links) do
     local button = Instance.new("TextButton")
-    button.Size = UDim2.new(1, -14, 0, 23)
-    button.Position = UDim2.fromOffset(7, 26 + ((i - 1) * 27))
-    button.BackgroundColor3 = Color3.fromRGB(29, 30, 38)
+    button.Size = UDim2.new(1, -14, 0, 22)
+    button.Position = UDim2.fromOffset(7, 6 + (i - 1) * 26)
+    button.BackgroundColor3 = Color3.fromRGB(31, 31, 38)
     button.Text = ""
-    button.AutoButtonColor = false
-    button.ZIndex = 4
+    button.BorderSizePixel = 0
+    button.ZIndex = 3
     button.Parent = panel
-    corner(button, 6)
 
-    local icon = Instance.new("TextLabel")
-    icon.Size = UDim2.fromOffset(25, 23)
-    icon.BackgroundTransparency = 1
-    icon.Text = data.icon
-    icon.TextColor3 = Color3.fromRGB(255, 130, 65)
-    icon.TextSize = 15
-    icon.Font = Enum.Font.GothamBold
-    icon.ZIndex = 5
-    icon.Parent = button
+    local bc = Instance.new("UICorner")
+    bc.CornerRadius = UDim.new(0, 6)
+    bc.Parent = button
 
-    local label = Instance.new("TextLabel")
-    label.Size = UDim2.new(1, -34, 1, 0)
-    label.Position = UDim2.fromOffset(29, 0)
-    label.BackgroundTransparency = 1
-    label.Text = data.name .. "   ›"
-    label.TextColor3 = Color3.fromRGB(225, 225, 235)
-    label.TextSize = 10
-    label.Font = Enum.Font.GothamSemibold
-    label.TextXAlignment = Enum.TextXAlignment.Left
-    label.ZIndex = 5
-    label.Parent = button
+    local logo = Instance.new("TextLabel")
+    logo.Size = UDim2.fromOffset(24, 22)
+    logo.Position = UDim2.fromOffset(5, 0)
+    logo.BackgroundTransparency = 1
+    logo.Text = data.Logo
+    logo.TextColor3 = data.Color
+    logo.Font = Enum.Font.GothamBold
+    logo.TextSize = 16
+    logo.ZIndex = 4
+    logo.Parent = button
 
-    button.MouseEnter:Connect(function()
-        tween(button, 0.15, {
-            BackgroundColor3 = Color3.fromRGB(61, 39, 31)
-        })
-        label.TextColor3 = Color3.fromRGB(255, 155, 105)
-    end)
-
-    button.MouseLeave:Connect(function()
-        tween(button, 0.15, {
-            BackgroundColor3 = Color3.fromRGB(29, 30, 38)
-        })
-        label.TextColor3 = Color3.fromRGB(225, 225, 235)
-    end)
+    local name = Instance.new("TextLabel")
+    name.Size = UDim2.new(1, -38, 1, 0)
+    name.Position = UDim2.fromOffset(31, 0)
+    name.BackgroundTransparency = 1
+    name.Text = data.Name
+    name.TextColor3 = Color3.new(1, 1, 1)
+    name.Font = Enum.Font.GothamBold
+    name.TextSize = 10
+    name.TextXAlignment = Enum.TextXAlignment.Left
+    name.ZIndex = 4
+    name.Parent = button
 
     button.Activated:Connect(function()
-        if copyText(data.url) then
-            showToast("LINK COPIED!")
-        else
-            showToast("CLIPBOARD UNAVAILABLE")
-        end
+        copyLink(data.URL)
+        name.Text = "Copied!"
+
+        task.delay(1, function()
+            if name.Parent then
+                name.Text = data.Name
+            end
+        end)
     end)
 end
 
--- Dropdown toggle
+-- MENU ANIMATION
 local opened = false
+local animating = false
+
 menu.Activated:Connect(function()
+    if animating then return end
+    animating = true
     opened = not opened
-    menu.Text = opened and "×" or "☰"
-    tween(menu, 0.15, {
-        BackgroundColor3 = opened
-            and Color3.fromRGB(75, 43, 32)
-            or Color3.fromRGB(42, 35, 34)
-    })
-    tween(panel, 0.3, {
-        Size = UDim2.new(1, 0, 0, opened and 142 or 0)
-    })
-end)
 
--- Animated status dot
-task.spawn(function()
-    while gui.Parent do
-        tween(dot, 0.7, {BackgroundTransparency = 0.45})
-        tween(dotStroke, 0.7, {Transparency = 0.85})
-        task.wait(0.7)
-        tween(dot, 0.7, {BackgroundTransparency = 0})
-        tween(dotStroke, 0.7, {Transparency = 0.35})
-        task.wait(0.7)
+    if opened then
+        panel.Visible = true
+        local tween = TweenService:Create(
+            panel,
+            TweenInfo.new(0.2, Enum.EasingStyle.Quart),
+            {Size = UDim2.fromOffset(156, 112)}
+        )
+        tween:Play()
+        tween.Completed:Wait()
+    else
+        local tween = TweenService:Create(
+            panel,
+            TweenInfo.new(0.2, Enum.EasingStyle.Quart),
+            {Size = UDim2.fromOffset(156, 0)}
+        )
+        tween:Play()
+        tween.Completed:Wait()
+        panel.Visible = false
     end
+
+    animating = false
 end)
 
--- Simulated counter
-task.spawn(function()
-    while gui.Parent do
-        counter.Text = tostring(math.random(500, 1500)) .. " ACTIVE"
-        task.wait(3)
-    end
-end)
+-- DRAG SYSTEM
+local dragArea = Instance.new("TextButton")
+dragArea.Size = UDim2.new(1, -38, 1, 0)
+dragArea.BackgroundTransparency = 1
+dragArea.Text = ""
+dragArea.AutoButtonColor = false
+dragArea.ZIndex = 6
+dragArea.Parent = header
 
--- Mobile dragging (header only)
 local dragging = false
 local dragStart
 local startPosition
+local dragInput
 
-header.InputBegan:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1
-        or input.UserInputType == Enum.UserInputType.Touch then
+dragArea.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.Touch
+    or input.UserInputType == Enum.UserInputType.MouseButton1 then
         dragging = true
         dragStart = input.Position
         startPosition = holder.Position
+
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then
+                dragging = false
+            end
+        end)
     end
 end)
 
-UIS.InputChanged:Connect(function(input)
-    if dragging and (
-        input.UserInputType == Enum.UserInputType.MouseMovement
-        or input.UserInputType == Enum.UserInputType.Touch
-    ) then
+dragArea.InputChanged:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.Touch
+    or input.UserInputType == Enum.UserInputType.MouseMovement then
+        dragInput = input
+    end
+end)
+
+UserInputService.InputChanged:Connect(function(input)
+    if dragging and input == dragInput then
         local delta = input.Position - dragStart
         holder.Position = UDim2.new(
             startPosition.X.Scale,
@@ -315,10 +278,13 @@ UIS.InputChanged:Connect(function(input)
     end
 end)
 
-UIS.InputEnded:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1
-        or input.UserInputType == Enum.UserInputType.Touch then
-        dragging = false
+-- SIMULATED COUNTER
+task.spawn(function()
+    local count = 693
+    while gui.Parent do
+        task.wait(3)
+        count = math.clamp(count + math.random(-10, 10), 500, 1500)
+        counter.Text = count .. " Active"
     end
 end)
 
