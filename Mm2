@@ -148,8 +148,8 @@ panelTitle.ZIndex = 4
 panelTitle.Parent = panel
 
 local links = {
-    {icon = "♪", name = "TikTok", url = "https://www.tiktok.com/@torchveil"},
-    {icon = "♪", name = "TikTok 2", url = "https://www.tiktok.com/@darkest.mm2"},
+    {icon = "♪", name = "TikTok #1", url = "https://www.tiktok.com/@torchveil"},
+    {icon = "♪", name = "TikTok #2", url = "https://www.tiktok.com/@darkest.mm2"},
     {icon = "▶", name = "YouTube", url = "https://www.youtube.com/@ScriptDox"},
     {icon = "◈", name = "Discord", url = "https://discord.gg/jKsNYcbwaY"}
 }
