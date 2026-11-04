@@ -1,1 +1,98 @@
-loadstring(game:HttpGet("https://cdn.sourceb.in/bins/HUVBjHuNlC/0"))()
+local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
+local player = Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
+
+-- ScreenGui
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "ActivePlayersGui"
+screenGui.ResetOnSpawn = false
+screenGui.IgnoreGuiInset = true
+screenGui.Parent = playerGui
+
+-- Pill container
+local pill = Instance.new("Frame")
+pill.Name = "Pill"
+pill.Size = UDim2.fromOffset(135, 32)
+pill.Position = UDim2.new(0, 12, 0, 12)
+pill.BackgroundColor3 = Color3.fromRGB(22, 22, 24)
+pill.BackgroundTransparency = 0.1
+pill.BorderSizePixel = 0
+pill.Parent = screenGui
+
+local pillCorner = Instance.new("UICorner")
+pillCorner.CornerRadius = UDim.new(1, 0)
+pillCorner.Parent = pill
+
+local pillStroke = Instance.new("UIStroke")
+pillStroke.Color = Color3.fromRGB(60, 60, 65)
+pillStroke.Thickness = 1
+pillStroke.Transparency = 0.5
+pillStroke.Parent = pill
+
+-- Green dot
+local dot = Instance.new("Frame")
+dot.Name = "Dot"
+dot.Size = UDim2.fromOffset(10, 10)
+dot.Position = UDim2.new(0, 12, 0.5, 0)
+dot.AnchorPoint = Vector2.new(0, 0.5)
+dot.BackgroundColor3 = Color3.fromRGB(0, 220, 110)
+dot.BorderSizePixel = 0
+dot.Parent = pill
+
+local dotCorner = Instance.new("UICorner")
+dotCorner.CornerRadius = UDim.new(1, 0)
+dotCorner.Parent = dot
+
+-- Dot glow / pulse
+task.spawn(function()
+	while dot.Parent do
+		local fadeOut = TweenService:Create(dot, TweenInfo.new(1, Enum.EasingStyle.Sine), {
+			BackgroundTransparency = 0.55,
+		})
+		fadeOut:Play()
+		fadeOut.Completed:Wait()
+
+		local fadeIn = TweenService:Create(dot, TweenInfo.new(1, Enum.EasingStyle.Sine), {
+			BackgroundTransparency = 0,
+		})
+		fadeIn:Play()
+		fadeIn.Completed:Wait()
+	end
+end)
+
+-- Label
+local label = Instance.new("TextLabel")
+label.Name = "CountLabel"
+label.BackgroundTransparency = 1
+label.Position = UDim2.new(0, 30, 0, 0)
+label.Size = UDim2.new(1, -40, 1, 0)
+label.Font = Enum.Font.GothamMedium
+label.TextSize = 14
+label.TextColor3 = Color3.fromRGB(235, 235, 240)
+label.TextXAlignment = Enum.TextXAlignment.Left
+label.Text = "0 active"
+label.Parent = pill
+
+-- Number logic
+local MIN, MAX = 400, 1000
+local current = math.random(MIN, MAX)
+label.Text = current .. " active"
+
+task.spawn(function()
+	while pill.Parent do
+		task.wait(math.random(3, 6))
+
+		-- small realistic drift instead of full random jumps
+		current = math.clamp(current + math.random(-18, 28), MIN, MAX)
+		label.Text = current .. " active"
+
+		-- quick fade on update
+		local fade = TweenService:Create(label, TweenInfo.new(0.25), {
+			TextTransparency = 0.7,
+		})
+		fade:Play()
+		fade.Completed:Wait()
+		TweenService:Create(label, TweenInfo.new(0.25), { TextTransparency = 0 }):Play()
+	end
+end)
