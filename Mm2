@@ -1,5 +1,5 @@
 
--- Active Counter GUI | Delta Android
+-- Active Counter GUI | Delta
 
 local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
@@ -18,6 +18,7 @@ gui.Parent = playerGui
 
 -- Main frame
 local main = Instance.new("Frame")
+main.Name = "Main"
 main.Size = UDim2.fromOffset(165, 42)
 main.Position = UDim2.fromOffset(15, 15)
 main.BackgroundColor3 = Color3.fromRGB(25, 27, 30)
@@ -33,7 +34,7 @@ local stroke = Instance.new("UIStroke", main)
 stroke.Color = Color3.fromRGB(55, 60, 65)
 stroke.Thickness = 1
 
--- Green indicator
+-- Green dot
 local dot = Instance.new("Frame")
 dot.Size = UDim2.fromOffset(9, 9)
 dot.Position = UDim2.new(0, 13, 0.5, -4)
@@ -43,9 +44,9 @@ dot.Parent = main
 
 Instance.new("UICorner", dot).CornerRadius = UDim.new(1, 0)
 
--- Counter label
+-- Active counter text
 local label = Instance.new("TextLabel")
-label.Size = UDim2.new(1, -75, 1, 0)
+label.Size = UDim2.new(1, -65, 1, 0)
 label.Position = UDim2.fromOffset(31, 0)
 label.BackgroundTransparency = 1
 label.Text = "693 Active"
@@ -55,61 +56,43 @@ label.Font = Enum.Font.GothamMedium
 label.TextXAlignment = Enum.TextXAlignment.Left
 label.Parent = main
 
--- Separate menu button
+-- Menu button INSIDE main frame
 local menu = Instance.new("TextButton")
-menu.Size = UDim2.fromOffset(30, 30)
-menu.Position = UDim2.new(1, -35, 0, 6)
-menu.BackgroundColor3 = Color3.fromRGB(55, 58, 64)
+menu.Size = UDim2.fromOffset(28, 28)
+menu.Position = UDim2.new(1, -34, 0.5, -14)
+menu.BackgroundColor3 = Color3.fromRGB(42, 45, 50)
 menu.BorderSizePixel = 0
-menu.Text = "☰"
-menu.TextColor3 = Color3.fromRGB(255, 255, 255)
-menu.TextSize = 21
-menu.Font = Enum.Font.GothamBold
-menu.ZIndex = 10
-menu.Parent = gui
+menu.Text = ""
+menu.AutoButtonColor = true
+menu.ZIndex = 5
+menu.Parent = main
 
-Instance.new("UICorner", menu).CornerRadius = UDim.new(0, 7)
+Instance.new("UICorner", menu).CornerRadius = UDim.new(0, 6)
 
--- Expanded panel
-local panel = Instance.new("Frame")
-panel.Size = UDim2.fromOffset(165, 35)
-panel.Position = UDim2.fromOffset(15, 62)
-panel.BackgroundColor3 = Color3.fromRGB(34, 37, 41)
-panel.BorderSizePixel = 0
-panel.Visible = false
-panel.Parent = gui
+-- Three horizontal lines
+for i = 1, 3 do
+    local line = Instance.new("Frame")
+    line.Size = UDim2.fromOffset(15, 2)
+    line.Position = UDim2.new(0.5, -7, 0.5, -7 + ((i - 1) * 6))
+    line.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    line.BorderSizePixel = 0
+    line.ZIndex = 6
+    line.Parent = menu
 
-Instance.new("UICorner", panel).CornerRadius = UDim.new(0, 9)
-
-local panelText = Instance.new("TextLabel")
-panelText.Size = UDim2.new(1, -16, 1, 0)
-panelText.Position = UDim2.fromOffset(8, 0)
-panelText.BackgroundTransparency = 1
-panelText.Text = "Status: Simulated"
-panelText.TextColor3 = Color3.fromRGB(210, 215, 220)
-panelText.TextSize = 12
-panelText.Font = Enum.Font.GothamMedium
-panelText.TextXAlignment = Enum.TextXAlignment.Left
-panelText.Parent = panel
-
--- Keep menu and panel following main while dragging
-local function updatePosition()
-    menu.Position = UDim2.new(
-        main.Position.X.Scale,
-        main.Position.X.Offset + main.AbsoluteSize.X - 35,
-        main.Position.Y.Scale,
-        main.Position.Y.Offset + 6
-    )
-
-    panel.Position = UDim2.new(
-        main.Position.X.Scale,
-        main.Position.X.Offset,
-        main.Position.Y.Scale,
-        main.Position.Y.Offset + 47
-    )
+    Instance.new("UICorner", line).CornerRadius = UDim.new(1, 0)
 end
 
-main:GetPropertyChangedSignal("Position"):Connect(updatePosition)
+-- Expand panel
+local panel = Instance.new("Frame")
+panel.Name = "Panel"
+panel.Position = UDim2.fromOffset(10, 47)
+panel.Size = UDim2.new(1, -20, 0, 25)
+panel.BackgroundColor3 = Color3.fromRGB(38, 41, 46)
+panel.BorderSizePixel = 0
+panel.Visible = false
+panel.Parent = main
+
+Instance.new("UICorner", panel).CornerRadius = UDim.new(0, 7)
 
 -- Menu toggle
 local expanded = false
@@ -119,30 +102,31 @@ menu.Activated:Connect(function()
 
     if expanded then
         panel.Visible = true
+
         TweenService:Create(
-            panel,
-            TweenInfo.new(0.25),
-            {Size = UDim2.fromOffset(165, 35)}
+            main,
+            TweenInfo.new(0.25, Enum.EasingStyle.Quart, Enum.EasingDirection.Out),
+            {Size = UDim2.fromOffset(165, 82)}
         ):Play()
     else
         local tween = TweenService:Create(
-            panel,
-            TweenInfo.new(0.2),
-            {Size = UDim2.fromOffset(165, 0)}
+            main,
+            TweenInfo.new(0.25, Enum.EasingStyle.Quart, Enum.EasingDirection.Out),
+            {Size = UDim2.fromOffset(165, 42)}
         )
+
         tween:Play()
+
         tween.Completed:Connect(function()
             if not expanded then
                 panel.Visible = false
-                panel.Size = UDim2.fromOffset(165, 35)
             end
         end)
     end
 end)
 
--- Simulated counter
+-- Simulated active counter
 local currentCount = 693
-label.Text = currentCount .. " Active"
 
 task.spawn(function()
     while gui.Parent do
@@ -158,7 +142,5 @@ task.spawn(function()
         label.Text = currentCount .. " Active"
     end
 end)
-
-updatePosition()
 
 print("Active Counter Loaded!")
