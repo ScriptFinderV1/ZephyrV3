@@ -1,38 +1,46 @@
 
--- Active Counter GUI | Delta Android
+-- Active Counter GUI | Delta
 
 local Players = game:GetService("Players")
-local UserInputService = game:GetService("UserInputService")
-
 local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 
+-- Remove old GUI
 local old = playerGui:FindFirstChild("ActiveCounterGUI")
-if old then old:Destroy() end
+if old then
+    old:Destroy()
+end
 
+-- Screen GUI
 local gui = Instance.new("ScreenGui")
 gui.Name = "ActiveCounterGUI"
 gui.ResetOnSpawn = false
 gui.DisplayOrder = 999
 gui.Parent = playerGui
 
+-- Main box
 local main = Instance.new("Frame")
+main.Name = "Main"
 main.Size = UDim2.fromOffset(155, 42)
 main.Position = UDim2.fromOffset(15, 15)
 main.BackgroundColor3 = Color3.fromRGB(25, 27, 30)
 main.BorderSizePixel = 0
 main.Active = true
+main.Draggable = true
 main.Parent = gui
 
+-- Rounded corners
 local corner = Instance.new("UICorner")
 corner.CornerRadius = UDim.new(0, 12)
 corner.Parent = main
 
+-- Border
 local stroke = Instance.new("UIStroke")
 stroke.Color = Color3.fromRGB(55, 60, 65)
 stroke.Thickness = 1
 stroke.Parent = main
 
+-- Green indicator
 local dot = Instance.new("Frame")
 dot.Size = UDim2.fromOffset(9, 9)
 dot.Position = UDim2.new(0, 13, 0.5, -4)
@@ -44,51 +52,20 @@ local dotCorner = Instance.new("UICorner")
 dotCorner.CornerRadius = UDim.new(1, 0)
 dotCorner.Parent = dot
 
+-- Active text
 local label = Instance.new("TextLabel")
 label.Size = UDim2.new(1, -38, 1, 0)
 label.Position = UDim2.fromOffset(31, 0)
 label.BackgroundTransparency = 1
+label.Text = "693 Active"
 label.TextColor3 = Color3.fromRGB(235, 240, 235)
 label.TextSize = 14
 label.Font = Enum.Font.GothamMedium
 label.TextXAlignment = Enum.TextXAlignment.Left
 label.Parent = main
 
--- Android touch dragging
-local dragging = false
-local touchStart = nil
-local frameStart = nil
-
-main.InputBegan:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.Touch then
-        dragging = true
-        touchStart = input.Position
-        frameStart = main.Position
-    end
-end)
-
-UserInputService.InputChanged:Connect(function(input)
-    if dragging and input.UserInputType == Enum.UserInputType.Touch then
-        local delta = input.Position - touchStart
-
-        main.Position = UDim2.new(
-            frameStart.X.Scale,
-            frameStart.X.Offset + delta.X,
-            frameStart.Y.Scale,
-            frameStart.Y.Offset + delta.Y
-        )
-    end
-end)
-
-UserInputService.InputEnded:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.Touch then
-        dragging = false
-    end
-end)
-
--- Counter
+-- Active counter
 local currentCount = 693
-label.Text = currentCount .. " Active"
 
 task.spawn(function()
     while gui.Parent do
@@ -100,9 +77,14 @@ task.spawn(function()
             change = -change
         end
 
-        currentCount = math.clamp(currentCount + change, 500, 1500)
+        currentCount = math.clamp(
+            currentCount + change,
+            500,
+            1500
+        )
+
         label.Text = currentCount .. " Active"
     end
 end)
 
-print("Android Active Counter Loaded!")
+print("Active Counter GUI Loaded!")
