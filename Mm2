@@ -1,51 +1,32 @@
 
--- Active Counter GUI | Delta
-
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
-
-if not player then
-    warn("Player not found!")
-    return
-end
-
 local playerGui = player:WaitForChild("PlayerGui")
 
--- Remove previous GUI
 local old = playerGui:FindFirstChild("ActiveCounterGUI")
-if old then
-    old:Destroy()
-end
+if old then old:Destroy() end
 
--- Screen GUI
 local gui = Instance.new("ScreenGui")
 gui.Name = "ActiveCounterGUI"
 gui.ResetOnSpawn = false
-gui.IgnoreGuiInset = false
-gui.DisplayOrder = 999
 gui.Parent = playerGui
 
--- Main rounded box
 local main = Instance.new("Frame")
-main.Name = "Main"
 main.Size = UDim2.fromOffset(155, 42)
 main.Position = UDim2.fromOffset(15, 15)
 main.BackgroundColor3 = Color3.fromRGB(25, 27, 30)
 main.BorderSizePixel = 0
 main.Parent = gui
 
--- Rounded corners
 local corner = Instance.new("UICorner")
 corner.CornerRadius = UDim.new(0, 12)
 corner.Parent = main
 
--- Border
 local stroke = Instance.new("UIStroke")
 stroke.Color = Color3.fromRGB(55, 60, 65)
 stroke.Thickness = 1
 stroke.Parent = main
 
--- Green active dot
 local dot = Instance.new("Frame")
 dot.Size = UDim2.fromOffset(9, 9)
 dot.Position = UDim2.new(0, 13, 0.5, -4)
@@ -57,41 +38,39 @@ local dotCorner = Instance.new("UICorner")
 dotCorner.CornerRadius = UDim.new(1, 0)
 dotCorner.Parent = dot
 
--- Active text
 local label = Instance.new("TextLabel")
 label.Size = UDim2.new(1, -38, 1, 0)
 label.Position = UDim2.fromOffset(31, 0)
 label.BackgroundTransparency = 1
-label.Text = "693 Active"
 label.TextColor3 = Color3.fromRGB(235, 240, 235)
 label.TextSize = 14
 label.Font = Enum.Font.GothamMedium
 label.TextXAlignment = Enum.TextXAlignment.Left
 label.Parent = main
 
--- Natural counter simulation
 local currentCount = 693
+label.Text = currentCount .. " Active"
 
 task.spawn(function()
     while gui.Parent do
-        task.wait(math.random(5, 12))
+        task.wait(math.random(12, 20))
 
-        local change = math.random(1, 4)
+        local roll = math.random(1, 10)
+        local change = 0
 
-        if math.random(1, 2) == 1 then
-            change = -change
+        if roll <= 4 then
+            change = 1
+        elseif roll <= 7 then
+            change = -1
+        elseif roll == 8 then
+            change = 2
+        elseif roll == 9 then
+            change = -2
         end
 
-        currentCount = math.clamp(
-            currentCount + change,
-            500,
-            1500
-        )
-
+        currentCount = math.clamp(currentCount + change, 500, 1500)
         label.Text = currentCount .. " Active"
     end
 end)
-
-print("Active Counter GUI Loaded!")
 
 print("Active Counter GUI successfully loaded!")
