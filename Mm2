@@ -1,70 +1,77 @@
 
--- Active Counter GUI | Delta
+-- Active Counter GUI - Delta
 
 local Players = game:GetService("Players")
-local TweenService = game:GetService("TweenService")
-local CoreGui = game:GetService("CoreGui")
+local player = Players.LocalPlayer
 
-local ScreenGui = Instance.new("ScreenGui")
-ScreenGui.Name = "ActiveCounterGUI"
-ScreenGui.ResetOnSpawn = false
-
-pcall(function()
-    ScreenGui.Parent = CoreGui
-end)
-
-if not ScreenGui.Parent then
-    ScreenGui.Parent = Players.LocalPlayer:WaitForChild("PlayerGui")
+if not player then
+    warn("Player not found!")
+    return
 end
 
-local Main = Instance.new("Frame")
-Main.Name = "Main"
-Main.Size = UDim2.new(0, 155, 0, 42)
-Main.Position = UDim2.new(0, 15, 0, 15)
-Main.BackgroundColor3 = Color3.fromRGB(25, 27, 30)
-Main.BorderSizePixel = 0
-Main.Parent = ScreenGui
+local playerGui = player:WaitForChild("PlayerGui")
 
-local Corner = Instance.new("UICorner")
-Corner.CornerRadius = UDim.new(0, 12)
-Corner.Parent = Main
+-- Remove old GUI
+local old = playerGui:FindFirstChild("ActiveCounterGUI")
+if old then
+    old:Destroy()
+end
 
-local Stroke = Instance.new("UIStroke")
-Stroke.Color = Color3.fromRGB(55, 60, 65)
-Stroke.Thickness = 1
-Stroke.Parent = Main
+local gui = Instance.new("ScreenGui")
+gui.Name = "ActiveCounterGUI"
+gui.ResetOnSpawn = false
+gui.IgnoreGuiInset = false
+gui.DisplayOrder = 999
+gui.Parent = playerGui
 
--- Green indicator
-local Dot = Instance.new("Frame")
-Dot.Size = UDim2.new(0, 9, 0, 9)
-Dot.Position = UDim2.new(0, 13, 0.5, -4)
-Dot.BackgroundColor3 = Color3.fromRGB(50, 220, 100)
-Dot.BorderSizePixel = 0
-Dot.Parent = Main
+-- Main box
+local main = Instance.new("Frame")
+main.Size = UDim2.fromOffset(155, 42)
+main.Position = UDim2.fromOffset(15, 15)
+main.BackgroundColor3 = Color3.fromRGB(25, 27, 30)
+main.BorderSizePixel = 0
+main.Visible = true
+main.Parent = gui
 
-local DotCorner = Instance.new("UICorner")
-DotCorner.CornerRadius = UDim.new(1, 0)
-DotCorner.Parent = Dot
+local corner = Instance.new("UICorner")
+corner.CornerRadius = UDim.new(0, 12)
+corner.Parent = main
 
--- Active text
-local Label = Instance.new("TextLabel")
-Label.Size = UDim2.new(1, -38, 1, 0)
-Label.Position = UDim2.new(0, 31, 0, 0)
-Label.BackgroundTransparency = 1
-Label.Text = "693 Active"
-Label.TextColor3 = Color3.fromRGB(235, 240, 235)
-Label.TextSize = 14
-Label.Font = Enum.Font.GothamMedium
-Label.TextXAlignment = Enum.TextXAlignment.Left
-Label.Parent = Main
+local stroke = Instance.new("UIStroke")
+stroke.Color = Color3.fromRGB(55, 60, 65)
+stroke.Thickness = 1
+stroke.Parent = main
 
--- Random active counter
+-- Green dot
+local dot = Instance.new("Frame")
+dot.Size = UDim2.fromOffset(9, 9)
+dot.Position = UDim2.new(0, 13, 0.5, -4)
+dot.BackgroundColor3 = Color3.fromRGB(50, 220, 100)
+dot.BorderSizePixel = 0
+dot.Parent = main
+
+local dotCorner = Instance.new("UICorner")
+dotCorner.CornerRadius = UDim.new(1, 0)
+dotCorner.Parent = dot
+
+-- Text
+local label = Instance.new("TextLabel")
+label.Size = UDim2.new(1, -38, 1, 0)
+label.Position = UDim2.fromOffset(31, 0)
+label.BackgroundTransparency = 1
+label.Text = "693 Active"
+label.TextColor3 = Color3.fromRGB(235, 240, 235)
+label.TextSize = 14
+label.Font = Enum.Font.GothamMedium
+label.TextXAlignment = Enum.TextXAlignment.Left
+label.Parent = main
+
+-- Random counter
 task.spawn(function()
-    while ScreenGui.Parent do
-        local count = math.random(500, 1500)
-        Label.Text = count .. " Active"
-        task.wait(math.random(3, 6))
+    while gui.Parent do
+        label.Text = math.random(500, 1500) .. " Active"
+        task.wait(4)
     end
 end)
 
-print("Active Counter GUI Loaded!")
+print("Active Counter GUI successfully loaded!")
