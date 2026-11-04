@@ -28,13 +28,18 @@ gui.ResetOnSpawn = false
 gui.DisplayOrder = 999
 gui.Parent = playerGui
 
--- Main holder: never resized
+-- Main holder
 local holder = Instance.new("Frame")
 holder.Size = UDim2.fromOffset(240, 190)
 holder.Position = UDim2.fromOffset(15, 15)
 holder.BackgroundTransparency = 1
 holder.BorderSizePixel = 0
 holder.Parent = gui
+
+-- ENTIRE GUI SCALE
+local uiScale = Instance.new("UIScale")
+uiScale.Scale = 0.85
+uiScale.Parent = holder
 
 -- FIXED HEADER
 local header = Instance.new("Frame")
@@ -128,6 +133,7 @@ panelStroke.Color = Color3.fromRGB(65, 65, 75)
 panelStroke.Thickness = 1.5
 panelStroke.Parent = panel
 
+-- SOCIAL LINKS
 local links = {
     {
         Name = "Main TikTok",
@@ -204,26 +210,26 @@ for i, data in ipairs(links) do
     end)
 end
 
--- MENU ANIMATION: only panel height changes
+-- MENU ANIMATION
 local opened = false
 local animating = false
 
 menu.Activated:Connect(function()
     if animating then return end
     animating = true
-
     opened = not opened
 
     if opened then
         panel.Visible = true
 
-        TweenService:Create(
+        local tween = TweenService:Create(
             panel,
             TweenInfo.new(0.22, Enum.EasingStyle.Quart, Enum.EasingDirection.Out),
             {Size = UDim2.fromOffset(240, 150)}
-        ):Play()
+        )
 
-        task.wait(0.23)
+        tween:Play()
+        tween.Completed:Wait()
     else
         local tween = TweenService:Create(
             panel,
@@ -239,7 +245,7 @@ menu.Activated:Connect(function()
     animating = false
 end)
 
--- Drag the whole GUI only from the header's empty left area
+-- DRAG SYSTEM
 local dragArea = Instance.new("TextButton")
 dragArea.Size = UDim2.new(1, -55, 1, 0)
 dragArea.BackgroundTransparency = 1
@@ -256,6 +262,7 @@ local dragInput
 dragArea.InputBegan:Connect(function(input)
     if input.UserInputType == Enum.UserInputType.Touch
     or input.UserInputType == Enum.UserInputType.MouseButton1 then
+
         dragging = true
         dragStart = input.Position
         startPosition = holder.Position
@@ -288,7 +295,7 @@ UserInputService.InputChanged:Connect(function(input)
     end
 end)
 
--- Simulated counter
+-- SIMULATED ACTIVE COUNTER
 task.spawn(function()
     local count = 693
 
