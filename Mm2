@@ -48,24 +48,17 @@ label.Font = Enum.Font.GothamMedium
 label.TextXAlignment = Enum.TextXAlignment.Left
 label.Parent = main
 
-local currentCount = 693
+local currentCount = 750
 label.Text = currentCount .. " Active"
 
 task.spawn(function()
     while gui.Parent do
-        task.wait(math.random(12, 20))
+        task.wait(math.random(8, 15))
 
-        local roll = math.random(1, 10)
-        local change = 0
+        local change = math.random(1, 10)
 
-        if roll <= 4 then
-            change = 1
-        elseif roll <= 7 then
-            change = -1
-        elseif roll == 8 then
-            change = 2
-        elseif roll == 9 then
-            change = -2
+        if math.random(1, 2) == 1 then
+            change = -change
         end
 
         currentCount = math.clamp(currentCount + change, 500, 1500)
