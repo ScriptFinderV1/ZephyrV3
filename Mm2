@@ -1,98 +1,70 @@
+
+-- Active Counter GUI | Delta
+
 local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
-local player = Players.LocalPlayer
-local playerGui = player:WaitForChild("PlayerGui")
+local CoreGui = game:GetService("CoreGui")
 
--- ScreenGui
-local screenGui = Instance.new("ScreenGui")
-screenGui.Name = "ActivePlayersGui"
-screenGui.ResetOnSpawn = false
-screenGui.IgnoreGuiInset = true
-screenGui.Parent = playerGui
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "ActiveCounterGUI"
+ScreenGui.ResetOnSpawn = false
 
--- Pill container
-local pill = Instance.new("Frame")
-pill.Name = "Pill"
-pill.Size = UDim2.fromOffset(135, 32)
-pill.Position = UDim2.new(0, 12, 0, 12)
-pill.BackgroundColor3 = Color3.fromRGB(22, 22, 24)
-pill.BackgroundTransparency = 0.1
-pill.BorderSizePixel = 0
-pill.Parent = screenGui
-
-local pillCorner = Instance.new("UICorner")
-pillCorner.CornerRadius = UDim.new(1, 0)
-pillCorner.Parent = pill
-
-local pillStroke = Instance.new("UIStroke")
-pillStroke.Color = Color3.fromRGB(60, 60, 65)
-pillStroke.Thickness = 1
-pillStroke.Transparency = 0.5
-pillStroke.Parent = pill
-
--- Green dot
-local dot = Instance.new("Frame")
-dot.Name = "Dot"
-dot.Size = UDim2.fromOffset(10, 10)
-dot.Position = UDim2.new(0, 12, 0.5, 0)
-dot.AnchorPoint = Vector2.new(0, 0.5)
-dot.BackgroundColor3 = Color3.fromRGB(0, 220, 110)
-dot.BorderSizePixel = 0
-dot.Parent = pill
-
-local dotCorner = Instance.new("UICorner")
-dotCorner.CornerRadius = UDim.new(1, 0)
-dotCorner.Parent = dot
-
--- Dot glow / pulse
-task.spawn(function()
-	while dot.Parent do
-		local fadeOut = TweenService:Create(dot, TweenInfo.new(1, Enum.EasingStyle.Sine), {
-			BackgroundTransparency = 0.55,
-		})
-		fadeOut:Play()
-		fadeOut.Completed:Wait()
-
-		local fadeIn = TweenService:Create(dot, TweenInfo.new(1, Enum.EasingStyle.Sine), {
-			BackgroundTransparency = 0,
-		})
-		fadeIn:Play()
-		fadeIn.Completed:Wait()
-	end
+pcall(function()
+    ScreenGui.Parent = CoreGui
 end)
 
--- Label
-local label = Instance.new("TextLabel")
-label.Name = "CountLabel"
-label.BackgroundTransparency = 1
-label.Position = UDim2.new(0, 30, 0, 0)
-label.Size = UDim2.new(1, -40, 1, 0)
-label.Font = Enum.Font.GothamMedium
-label.TextSize = 14
-label.TextColor3 = Color3.fromRGB(235, 235, 240)
-label.TextXAlignment = Enum.TextXAlignment.Left
-label.Text = "0 active"
-label.Parent = pill
+if not ScreenGui.Parent then
+    ScreenGui.Parent = Players.LocalPlayer:WaitForChild("PlayerGui")
+end
 
--- Number logic
-local MIN, MAX = 400, 1000
-local current = math.random(MIN, MAX)
-label.Text = current .. " active"
+local Main = Instance.new("Frame")
+Main.Name = "Main"
+Main.Size = UDim2.new(0, 155, 0, 42)
+Main.Position = UDim2.new(0, 15, 0, 15)
+Main.BackgroundColor3 = Color3.fromRGB(25, 27, 30)
+Main.BorderSizePixel = 0
+Main.Parent = ScreenGui
 
+local Corner = Instance.new("UICorner")
+Corner.CornerRadius = UDim.new(0, 12)
+Corner.Parent = Main
+
+local Stroke = Instance.new("UIStroke")
+Stroke.Color = Color3.fromRGB(55, 60, 65)
+Stroke.Thickness = 1
+Stroke.Parent = Main
+
+-- Green indicator
+local Dot = Instance.new("Frame")
+Dot.Size = UDim2.new(0, 9, 0, 9)
+Dot.Position = UDim2.new(0, 13, 0.5, -4)
+Dot.BackgroundColor3 = Color3.fromRGB(50, 220, 100)
+Dot.BorderSizePixel = 0
+Dot.Parent = Main
+
+local DotCorner = Instance.new("UICorner")
+DotCorner.CornerRadius = UDim.new(1, 0)
+DotCorner.Parent = Dot
+
+-- Active text
+local Label = Instance.new("TextLabel")
+Label.Size = UDim2.new(1, -38, 1, 0)
+Label.Position = UDim2.new(0, 31, 0, 0)
+Label.BackgroundTransparency = 1
+Label.Text = "693 Active"
+Label.TextColor3 = Color3.fromRGB(235, 240, 235)
+Label.TextSize = 14
+Label.Font = Enum.Font.GothamMedium
+Label.TextXAlignment = Enum.TextXAlignment.Left
+Label.Parent = Main
+
+-- Random active counter
 task.spawn(function()
-	while pill.Parent do
-		task.wait(math.random(3, 6))
-
-		-- small realistic drift instead of full random jumps
-		current = math.clamp(current + math.random(-18, 28), MIN, MAX)
-		label.Text = current .. " active"
-
-		-- quick fade on update
-		local fade = TweenService:Create(label, TweenInfo.new(0.25), {
-			TextTransparency = 0.7,
-		})
-		fade:Play()
-		fade.Completed:Wait()
-		TweenService:Create(label, TweenInfo.new(0.25), { TextTransparency = 0 }):Play()
-	end
+    while ScreenGui.Parent do
+        local count = math.random(500, 1500)
+        Label.Text = count .. " Active"
+        task.wait(math.random(3, 6))
+    end
 end)
+
+print("Active Counter GUI Loaded!")
