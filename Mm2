@@ -1,20 +1,18 @@
--- TORCHVEIL ACTIVE COUNTER GUI
--- Delta Executor | Android Friendly
+-- TORCHVEIL ACTIVE COUNTER
+-- Delta Executor | Mobile Friendly
 
 local Players = game:GetService("Players")
-local LocalPlayer = Players.LocalPlayer
 local TweenService = game:GetService("TweenService")
+local UserInputService = game:GetService("UserInputService")
 
-local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
+local player = Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
 
--- Remove old GUI
-local old = PlayerGui:FindFirstChild("ActiveCounterGUI")
-if old then
-    old:Destroy()
-end
+-- Remove previous GUI
+local old = playerGui:FindFirstChild("ActiveCounterGUI")
+if old then old:Destroy() end
 
--- Clipboard
-local function CopyLink(url)
+local function copyLink(url)
     if setclipboard then
         setclipboard(url)
     elseif toclipboard then
@@ -24,29 +22,28 @@ local function CopyLink(url)
     end
 end
 
--- Screen GUI
 local gui = Instance.new("ScreenGui")
 gui.Name = "ActiveCounterGUI"
 gui.ResetOnSpawn = false
-gui.Parent = PlayerGui
+gui.DisplayOrder = 999
+gui.Parent = playerGui
 
--- Main draggable container
-local container = Instance.new("Frame")
-container.Size = UDim2.new(0, 240, 0, 190)
-container.Position = UDim2.new(0, 15, 0, 15)
-container.BackgroundTransparency = 1
-container.BorderSizePixel = 0
-container.Active = true
-container.Draggable = true
-container.Parent = gui
+-- Main holder: never resized
+local holder = Instance.new("Frame")
+holder.Size = UDim2.fromOffset(240, 190)
+holder.Position = UDim2.fromOffset(15, 15)
+holder.BackgroundTransparency = 1
+holder.BorderSizePixel = 0
+holder.Parent = gui
 
--- HEADER (fixed position)
+-- FIXED HEADER
 local header = Instance.new("Frame")
-header.Size = UDim2.new(1, 0, 0, 42)
-header.Position = UDim2.new(0, 0, 0, 0)
+header.Size = UDim2.fromOffset(240, 42)
+header.Position = UDim2.fromOffset(0, 0)
 header.BackgroundColor3 = Color3.fromRGB(20, 20, 25)
 header.BorderSizePixel = 0
-header.Parent = container
+header.ZIndex = 5
+header.Parent = holder
 
 local headerCorner = Instance.new("UICorner")
 headerCorner.CornerRadius = UDim.new(0, 15)
@@ -59,63 +56,68 @@ headerStroke.Parent = header
 
 -- Green dot
 local dot = Instance.new("Frame")
-dot.Size = UDim2.new(0, 11, 0, 11)
-dot.Position = UDim2.new(0, 14, 0, 15)
+dot.Size = UDim2.fromOffset(11, 11)
+dot.Position = UDim2.fromOffset(14, 15)
 dot.BackgroundColor3 = Color3.fromRGB(0, 255, 75)
 dot.BorderSizePixel = 0
+dot.ZIndex = 7
 dot.Parent = header
 
 local dotCorner = Instance.new("UICorner")
 dotCorner.CornerRadius = UDim.new(1, 0)
 dotCorner.Parent = dot
 
--- Active counter
+-- Active text
 local counter = Instance.new("TextLabel")
-counter.Size = UDim2.new(0, 155, 1, 0)
-counter.Position = UDim2.new(0, 34, 0, 0)
+counter.Size = UDim2.new(1, -75, 1, 0)
+counter.Position = UDim2.fromOffset(34, 0)
 counter.BackgroundTransparency = 1
 counter.Text = "693 Active"
-counter.TextColor3 = Color3.fromRGB(255, 255, 255)
+counter.TextColor3 = Color3.new(1, 1, 1)
 counter.Font = Enum.Font.GothamBold
 counter.TextSize = 20
 counter.TextXAlignment = Enum.TextXAlignment.Left
+counter.ZIndex = 7
 counter.Parent = header
 
 -- Hamburger button
 local menu = Instance.new("TextButton")
-menu.Size = UDim2.new(0, 42, 0, 34)
+menu.Size = UDim2.fromOffset(42, 34)
 menu.Position = UDim2.new(1, -48, 0, 4)
 menu.BackgroundColor3 = Color3.fromRGB(38, 38, 46)
 menu.Text = ""
 menu.BorderSizePixel = 0
+menu.ZIndex = 8
 menu.Parent = header
 
 local menuCorner = Instance.new("UICorner")
 menuCorner.CornerRadius = UDim.new(0, 10)
 menuCorner.Parent = menu
 
--- Three horizontal lines
 for i = 1, 3 do
     local line = Instance.new("Frame")
-    line.Size = UDim2.new(0, 20, 0, 3)
+    line.Size = UDim2.fromOffset(20, 3)
     line.Position = UDim2.new(0.5, -10, 0, 9 + (i - 1) * 8)
-    line.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    line.BackgroundColor3 = Color3.new(1, 1, 1)
     line.BorderSizePixel = 0
+    line.ZIndex = 9
     line.Parent = menu
 
-    local corner = Instance.new("UICorner")
-    corner.CornerRadius = UDim.new(1, 0)
-    corner.Parent = line
+    local c = Instance.new("UICorner")
+    c.CornerRadius = UDim.new(1, 0)
+    c.Parent = line
 end
 
--- DROPDOWN PANEL (separate from header)
+-- SEPARATE DROPDOWN
 local panel = Instance.new("Frame")
-panel.Size = UDim2.new(1, 0, 0, 135)
-panel.Position = UDim2.new(0, 0, 0, 49)
+panel.Size = UDim2.fromOffset(240, 0)
+panel.Position = UDim2.fromOffset(0, 49)
 panel.BackgroundColor3 = Color3.fromRGB(20, 20, 25)
 panel.BorderSizePixel = 0
+panel.ClipsDescendants = true
 panel.Visible = false
-panel.Parent = container
+panel.ZIndex = 2
+panel.Parent = holder
 
 local panelCorner = Instance.new("UICorner")
 panelCorner.CornerRadius = UDim.new(0, 15)
@@ -126,7 +128,6 @@ panelStroke.Color = Color3.fromRGB(65, 65, 75)
 panelStroke.Thickness = 1.5
 panelStroke.Parent = panel
 
--- Social links
 local links = {
     {
         Name = "Main TikTok",
@@ -143,7 +144,7 @@ local links = {
     {
         Name = "YouTube",
         Logo = "▶",
-        Color = Color3.fromRGB(255, 40, 40),
+        Color = Color3.fromRGB(255, 45, 45),
         URL = "https://www.youtube.com/@ScriptDox"
     },
     {
@@ -154,49 +155,45 @@ local links = {
     }
 }
 
--- Create social buttons
 for i, data in ipairs(links) do
-
     local button = Instance.new("TextButton")
     button.Size = UDim2.new(1, -20, 0, 29)
-    button.Position = UDim2.new(0, 10, 0, 9 + (i - 1) * 34)
+    button.Position = UDim2.fromOffset(10, 9 + (i - 1) * 34)
     button.BackgroundColor3 = Color3.fromRGB(31, 31, 38)
     button.Text = ""
     button.BorderSizePixel = 0
-    button.AutoButtonColor = true
+    button.ZIndex = 3
     button.Parent = panel
 
     local corner = Instance.new("UICorner")
     corner.CornerRadius = UDim.new(0, 10)
     corner.Parent = button
 
-    -- Logo
     local logo = Instance.new("TextLabel")
-    logo.Size = UDim2.new(0, 35, 1, 0)
-    logo.Position = UDim2.new(0, 7, 0, 0)
+    logo.Size = UDim2.fromOffset(35, 29)
+    logo.Position = UDim2.fromOffset(7, 0)
     logo.BackgroundTransparency = 1
     logo.Text = data.Logo
     logo.TextColor3 = data.Color
     logo.Font = Enum.Font.GothamBold
     logo.TextSize = 21
+    logo.ZIndex = 4
     logo.Parent = button
 
-    -- Name
     local name = Instance.new("TextLabel")
     name.Size = UDim2.new(1, -55, 1, 0)
-    name.Position = UDim2.new(0, 45, 0, 0)
+    name.Position = UDim2.fromOffset(45, 0)
     name.BackgroundTransparency = 1
     name.Text = data.Name
-    name.TextColor3 = Color3.fromRGB(255, 255, 255)
+    name.TextColor3 = Color3.new(1, 1, 1)
     name.Font = Enum.Font.GothamBold
     name.TextSize = 13
     name.TextXAlignment = Enum.TextXAlignment.Left
+    name.ZIndex = 4
     name.Parent = button
 
-    -- Whole button copies the link
     button.Activated:Connect(function()
-        CopyLink(data.URL)
-
+        copyLink(data.URL)
         name.Text = "Copied!"
 
         task.delay(1, function()
@@ -207,57 +204,97 @@ for i, data in ipairs(links) do
     end)
 end
 
--- Menu toggle (no resizing = no header movement)
+-- MENU ANIMATION: only panel height changes
 local opened = false
-local busy = false
+local animating = false
 
 menu.Activated:Connect(function()
-    if busy then return end
-    busy = true
+    if animating then return end
+    animating = true
 
     opened = not opened
 
     if opened then
         panel.Visible = true
-        panel.BackgroundTransparency = 1
 
         TweenService:Create(
             panel,
-            TweenInfo.new(0.18, Enum.EasingStyle.Quad),
-            {BackgroundTransparency = 0}
+            TweenInfo.new(0.22, Enum.EasingStyle.Quart, Enum.EasingDirection.Out),
+            {Size = UDim2.fromOffset(240, 150)}
         ):Play()
+
+        task.wait(0.23)
     else
         local tween = TweenService:Create(
             panel,
-            TweenInfo.new(0.18, Enum.EasingStyle.Quad),
-            {BackgroundTransparency = 1}
+            TweenInfo.new(0.22, Enum.EasingStyle.Quart, Enum.EasingDirection.In),
+            {Size = UDim2.fromOffset(240, 0)}
         )
 
         tween:Play()
         tween.Completed:Wait()
-
-        if not opened then
-            panel.Visible = false
-        end
+        panel.Visible = false
     end
 
-    busy = false
+    animating = false
 end)
 
--- Simulated active counter
+-- Drag the whole GUI only from the header's empty left area
+local dragArea = Instance.new("TextButton")
+dragArea.Size = UDim2.new(1, -55, 1, 0)
+dragArea.BackgroundTransparency = 1
+dragArea.Text = ""
+dragArea.AutoButtonColor = false
+dragArea.ZIndex = 6
+dragArea.Parent = header
+
+local dragging = false
+local dragStart
+local startPosition
+local dragInput
+
+dragArea.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.Touch
+    or input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragging = true
+        dragStart = input.Position
+        startPosition = holder.Position
+
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then
+                dragging = false
+            end
+        end)
+    end
+end)
+
+dragArea.InputChanged:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.Touch
+    or input.UserInputType == Enum.UserInputType.MouseMovement then
+        dragInput = input
+    end
+end)
+
+UserInputService.InputChanged:Connect(function(input)
+    if dragging and input == dragInput then
+        local delta = input.Position - dragStart
+
+        holder.Position = UDim2.new(
+            startPosition.X.Scale,
+            startPosition.X.Offset + delta.X,
+            startPosition.Y.Scale,
+            startPosition.Y.Offset + delta.Y
+        )
+    end
+end)
+
+-- Simulated counter
 task.spawn(function()
     local count = 693
 
     while gui.Parent do
         task.wait(3)
-
-        count = math.clamp(
-            count + math.random(-10, 10),
-            500,
-            1500
-        )
-
+        count = math.clamp(count + math.random(-10, 10), 500, 1500)
         counter.Text = count .. " Active"
     end
-end)
 end)
