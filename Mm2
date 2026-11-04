@@ -52,106 +52,25 @@ hs.Color = Color3.fromRGB(65, 65, 75)
 hs.Thickness = 1
 hs.Parent = header
 
--- NEON EMERALD STATUS ORB
-
--- Outer glow
-local glow = Instance.new("Frame")
-glow.Name = "GreenGlow"
-glow.Size = UDim2.fromOffset(15, 15)
-glow.Position = UDim2.fromOffset(5, 7)
-glow.BackgroundColor3 = Color3.fromRGB(0, 255, 125)
-glow.BackgroundTransparency = 0.78
-glow.BorderSizePixel = 0
-glow.ZIndex = 6
-glow.Parent = header
-
-local glowCorner = Instance.new("UICorner")
-glowCorner.CornerRadius = UDim.new(1, 0)
-glowCorner.Parent = glow
-
--- Main orb
+-- GREEN DOT
 local dot = Instance.new("Frame")
-dot.Name = "StatusOrb"
-dot.Size = UDim2.fromOffset(8, 8)
-dot.Position = UDim2.fromOffset(8.5, 10.5)
-dot.BackgroundColor3 = Color3.fromRGB(40, 255, 130)
+dot.Size = UDim2.fromOffset(7, 7)
+dot.Position = UDim2.fromOffset(9, 11)
+dot.BackgroundColor3 = Color3.fromRGB(0, 255, 75)
 dot.BorderSizePixel = 0
-dot.ZIndex = 8
+dot.ZIndex = 7
 dot.Parent = header
 
 local dc = Instance.new("UICorner")
 dc.CornerRadius = UDim.new(1, 0)
 dc.Parent = dot
 
-local dotGradient = Instance.new("UIGradient")
-dotGradient.Color = ColorSequence.new({
-    ColorSequenceKeypoint.new(0, Color3.fromRGB(170, 255, 205)),
-    ColorSequenceKeypoint.new(0.5, Color3.fromRGB(40, 255, 130)),
-    ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 180, 90))
-})
-dotGradient.Rotation = 45
-dotGradient.Parent = dot
-
+-- GREEN DOT GLOW
 local dotStroke = Instance.new("UIStroke")
-dotStroke.Color = Color3.fromRGB(120, 255, 175)
-dotStroke.Thickness = 1
-dotStroke.Transparency = 0.1
+dotStroke.Color = Color3.fromRGB(0, 255, 100)
+dotStroke.Thickness = 2
+dotStroke.Transparency = 0.35
 dotStroke.Parent = dot
-
--- Tiny highlight
-local highlight = Instance.new("Frame")
-highlight.Size = UDim2.fromOffset(2, 2)
-highlight.Position = UDim2.fromOffset(10, 11)
-highlight.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-highlight.BackgroundTransparency = 0.15
-highlight.BorderSizePixel = 0
-highlight.ZIndex = 9
-highlight.Parent = header
-
-local highlightCorner = Instance.new("UICorner")
-highlightCorner.CornerRadius = UDim.new(1, 0)
-highlightCorner.Parent = highlight
-
--- NEON ORB ANIMATION
-task.spawn(function()
-    while gui.Parent do
-        TweenService:Create(
-            glow,
-            TweenInfo.new(0.8, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut),
-            {
-                Size = UDim2.fromOffset(19, 19),
-                Position = UDim2.fromOffset(3, 5),
-                BackgroundTransparency = 0.9
-            }
-        ):Play()
-
-        TweenService:Create(
-            dotStroke,
-            TweenInfo.new(0.8),
-            {Transparency = 0.65}
-        ):Play()
-
-        task.wait(0.8)
-
-        TweenService:Create(
-            glow,
-            TweenInfo.new(0.8, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut),
-            {
-                Size = UDim2.fromOffset(15, 15),
-                Position = UDim2.fromOffset(5, 7),
-                BackgroundTransparency = 0.65
-            }
-        ):Play()
-
-        TweenService:Create(
-            dotStroke,
-            TweenInfo.new(0.8),
-            {Transparency = 0.1}
-        ):Play()
-
-        task.wait(0.8)
-    end
-end)
 
 -- COUNTER
 local counter = Instance.new("TextLabel")
@@ -374,6 +293,39 @@ task.spawn(function()
         task.wait(3)
         count = math.clamp(count + math.random(-10, 10), 500, 1500)
         counter.Text = count .. " Active"
+    end
+end)
+
+-- ANIMATED STATUS DOT
+task.spawn(function()
+    while gui.Parent do
+        TweenService:Create(
+            dot,
+            TweenInfo.new(0.7),
+            {BackgroundTransparency = 0.45}
+        ):Play()
+
+        TweenService:Create(
+            dotStroke,
+            TweenInfo.new(0.7),
+            {Transparency = 0.85}
+        ):Play()
+
+        task.wait(0.7)
+
+        TweenService:Create(
+            dot,
+            TweenInfo.new(0.7),
+            {BackgroundTransparency = 0}
+        ):Play()
+
+        TweenService:Create(
+            dotStroke,
+            TweenInfo.new(0.7),
+            {Transparency = 0.35}
+        ):Play()
+
+        task.wait(0.7)
     end
 end)
 
